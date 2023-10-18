@@ -12,6 +12,7 @@ repositories {
 dependencies {
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.10.0'
     testRuntimeOnly group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.10.0'
+    shadow 'junit:junit:3.8.2'
 }
 
 test {
@@ -32,9 +33,14 @@ application {
     mainClass.set("seedu.duke.Duke")
 }
 
+version = '1.0.0'
+
+mainClassName = 'seedu.duke.Main'
+
 shadowJar {
     archiveBaseName.set("duke")
     archiveClassifier.set("")
+    archiveFileName = 'duke.jar'
 }
 
 checkstyle {
