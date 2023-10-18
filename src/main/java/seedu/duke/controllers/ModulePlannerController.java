@@ -34,6 +34,10 @@ public class ModulePlannerController {
         //This modules list of taken and classes left can be in a storage class later on.
         this.modulesMajor = new ModuleList("CS1231S CS2030S CS2040S CS2100 CS2101 CS2106 CS2109S CS3230");
         this.modulesTaken = new ModuleList("CS1231S MA1511");
+        //Show user the modules taken
+        for (String module : this.modulesTaken.getMainModuleList()) {
+            view.displayMessage("Completed " + module + "!");
+        }
         this.modulesLeft = new ModuleList();
 
         modsWithPreqs = new HashMap<>();
