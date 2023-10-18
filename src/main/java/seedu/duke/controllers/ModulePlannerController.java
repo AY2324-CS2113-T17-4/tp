@@ -46,8 +46,6 @@ public class ModulePlannerController {
         this.addModulePreqs = new CompletePreqs(addModsWithPreqs(modsWithPreqs));
         //Pass in the list of mods completed.
         addModulePreqs.initializeCompletedMods(modulesTaken);
-
-
     }
 
 
