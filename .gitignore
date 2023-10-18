@@ -16,7 +16,5 @@ bin/
 /text-ui-test/ACTUAL.TXT
 text-ui-test/EXPECTED-UNIX.TXT
 
-# data files
-/data
-/data/modulesMajor.txt
-/data/modulesTaken.txt
+# jar related
+/META-INF/MANIFEST.MF
