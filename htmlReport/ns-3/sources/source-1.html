@@ -1,0 +1,197 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > Api</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">seedu.duke.models</a>
+</div>
+
+<h1>Coverage Summary for Class: Api (seedu.duke.models)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Api</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    40%
+  </span>
+  <span class="absValue">
+    (2/5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (3/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    37.2%
+  </span>
+  <span class="absValue">
+    (16/43)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package seedu.duke.models;
+&nbsp;
+&nbsp;import java.io.IOException;
+&nbsp;import java.net.URI;
+&nbsp;import java.net.URISyntaxException;
+&nbsp;import java.net.http.HttpClient;
+&nbsp;import java.net.http.HttpRequest;
+&nbsp;import java.net.http.HttpResponse;
+&nbsp;
+&nbsp;import org.json.simple.JSONObject;
+&nbsp;import org.json.simple.parser.JSONParser;
+&nbsp;import org.json.simple.parser.ParseException;
+&nbsp;import seedu.duke.views.ModuleInfo;
+&nbsp;
+&nbsp;
+<b class="nc">&nbsp;public class Api {</b>
+&nbsp;
+&nbsp;    public static String getModuleInfo(String moduleCode) throws URISyntaxException {
+<b class="fc">&nbsp;        String url = &quot;https://api.nusmods.com/v2/2023-2024/modules/&quot; + moduleCode + &quot;.json&quot;;</b>
+<b class="fc">&nbsp;        HttpClient client = HttpClient.newHttpClient();</b>
+<b class="fc">&nbsp;        HttpRequest request = HttpRequest.newBuilder()</b>
+<b class="fc">&nbsp;                .uri(new URI(url))</b>
+<b class="fc">&nbsp;                .GET()</b>
+<b class="fc">&nbsp;                .build();</b>
+&nbsp;        try {
+<b class="fc">&nbsp;            HttpResponse&lt;String&gt; response = client.send(request, HttpResponse.BodyHandlers.ofString());</b>
+<b class="fc">&nbsp;            return response.body();</b>
+<b class="nc">&nbsp;        } catch (IOException | InterruptedException e) {</b>
+<b class="nc">&nbsp;            throw new RuntimeException(e);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    public static String getDescription(String moduleInfo) {
+<b class="fc">&nbsp;        int indexOfDescriptionStart = moduleInfo.indexOf(&quot;description&quot;);</b>
+<b class="fc">&nbsp;        int indexOfDescriptionEnd = moduleInfo.indexOf(&quot;workload&quot;);</b>
+<b class="pc">&nbsp;        if (indexOfDescriptionEnd != -1 | (indexOfDescriptionEnd != -1)) {</b>
+<b class="fc">&nbsp;            System.out.println(&quot;Index of &#39;description&#39;: &quot; + indexOfDescriptionStart);</b>
+<b class="fc">&nbsp;            System.out.println(&quot;Index of &#39;description&#39; end: &quot; + indexOfDescriptionEnd);</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            System.out.println(&quot;&#39;description&#39; not found in the string.&quot;);</b>
+&nbsp;        }
+&nbsp;        //   assuming that workload is always the next object after description
+<b class="fc">&nbsp;        String description = moduleInfo.substring(indexOfDescriptionStart + 8, indexOfDescriptionEnd - 2);</b>
+<b class="fc">&nbsp;        System.out.println(description);</b>
+<b class="fc">&nbsp;        return description;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static JSONObject getModuleInfoJson(String moduleCode) {
+&nbsp;        try {
+<b class="nc">&nbsp;            String url = &quot;https://api.nusmods.com/v2/2023-2024/modules/&quot; + moduleCode + &quot;.json&quot;;</b>
+<b class="nc">&nbsp;            HttpClient client = HttpClient.newHttpClient();</b>
+<b class="nc">&nbsp;            HttpRequest request = HttpRequest.newBuilder()</b>
+<b class="nc">&nbsp;                    .uri(new URI(url))</b>
+<b class="nc">&nbsp;                    .GET()</b>
+<b class="nc">&nbsp;                    .build();</b>
+<b class="nc">&nbsp;            HttpResponse&lt;String&gt; response = client.send(request, HttpResponse.BodyHandlers.ofString());</b>
+<b class="nc">&nbsp;            String responseBody = response.body();</b>
+<b class="nc">&nbsp;            JSONParser parser = new JSONParser();</b>
+&nbsp;            // Will refactor the variable later on, left it for easier readability
+<b class="nc">&nbsp;            JSONObject moduleInfo = (JSONObject) parser.parse(responseBody);</b>
+<b class="nc">&nbsp;            ModuleInfo.printModule(moduleInfo);</b>
+<b class="nc">&nbsp;            return moduleInfo;</b>
+<b class="nc">&nbsp;        } catch (ParseException e) {</b>
+&nbsp;            //to be replaced with more robust error class in the future
+<b class="nc">&nbsp;            System.out.println(&quot;Sorry, the JSON object could not be parsed&quot;);</b>
+<b class="nc">&nbsp;        } catch (IOException | InterruptedException e) {</b>
+<b class="nc">&nbsp;            System.out.println(&quot;Sorry, the JSON object could not be parsed&quot;);</b>
+<b class="nc">&nbsp;            throw new RuntimeException(e);</b>
+<b class="nc">&nbsp;        } catch (URISyntaxException e) {</b>
+&nbsp;            //to be replaced with more robust error class in the future
+<b class="nc">&nbsp;            System.out.println(&quot;Sorry, there was an error with&quot; +</b>
+<b class="nc">&nbsp;                    &quot; the provided URL: &quot; + e.getMessage());</b>
+<b class="nc">&nbsp;        }</b>
+<b class="nc">&nbsp;        return null;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static String getModuleName(JSONObject module) {
+<b class="nc">&nbsp;        return (String) module.get(&quot;moduleName&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-10-26 17:32</div>
+</div>
+</body>
+</html>
