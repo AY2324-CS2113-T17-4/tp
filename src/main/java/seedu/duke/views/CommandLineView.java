@@ -1,5 +1,7 @@
 package seedu.duke.views;
 
+
+import seedu.duke.models.schema.Major;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
@@ -30,6 +32,32 @@ public class CommandLineView {
         System.out.println("What Year and Semester are you? Ex: Y1/S2 for year 1 semester 2");
     }
 
+
+    public void handleMajorMessage(int userInputLength, Major major) {
+        assert (userInputLength == 1 || userInputLength == 2);
+        if (userInputLength == 1) {
+            if (major == null) {
+                displayMessage("No major selected!");
+                return;
+            }
+            displayMessage("Current major is " + major + ".");
+            return;
+        }
+        displayMessage("Major " + major + " selected!");
+    }
+
+    public void handleAddMessage(boolean isSuccessful) {
+        if (isSuccessful) {
+            displayMessage("Module Successfully Added");
+        }
+    }
+
+    public void handleDeleteMessage(boolean isSuccessful) {
+        if (isSuccessful) {
+            displayMessage("Module Successfully Deleted");
+        }
+    }
+
     /**
      * Display a message to the command line view.
      *
@@ -47,32 +75,37 @@ public class CommandLineView {
         System.out.println();
     }
 
+
     /**
      * Print a top line for a formatted subheader.
      */
     private void printTopLine() {
-        displayMessage(String.format("┌%-" + formatLineLength + "s┐", "").replace(' ', '-'));
+        displayMessage(String.format("+%-" + formatLineLength + "s+", "").replace(' ', '-'));
     }
 
     /**
      * Print a double top line for a formatted header.
      */
     private void printDoubleTopLine() {
-        displayMessage(String.format("╔%-" + formatLineLength + "s╗", "").replace(' ', '='));
+        displayMessage(String.format("#%-" + formatLineLength + "s#", "").replace(' ', '='));
     }
 
     /**
      * Print a bottom line for a formatted subheader.
      */
     private void printBottomLine() {
-        displayMessage(String.format("└%-" + formatLineLength + "s┘", "").replace(' ', '-'));
+        displayMessage(String.format("+%-" + formatLineLength + "s+", "").replace(' ', '-'));
     }
 
     /**
      * Print a double bottom line for a formatted header.
      */
     private void printDoubleBottomLine() {
-        displayMessage(String.format("╚%-" + formatLineLength + "s╝", "").replace(' ', '='));
+        displayMessage(String.format("#%-" + formatLineLength + "s#", "").replace(' ', '='));
+    }
+
+    private void printNewline(){
+        System.out.println();
     }
 
     /**
@@ -115,7 +148,7 @@ public class CommandLineView {
             if (currentLine.startsWith("***")) { //subsubheader
                 String actualModuleName = moduleName.substring(3);
                 displayMessage(" ~~\t" + returnJustified(actualModuleName, moduleMCs, longestLineLength) + "\t ~~");
-                displayMessage();
+                printNewline();
             } else if (currentLine.startsWith("**")) { //subheader has box
                 printTopLine();
                 String actualModuleName = moduleName.substring(2);
@@ -129,7 +162,7 @@ public class CommandLineView {
             } else if (!currentLine.isEmpty()) {
                 displayMessage("\t" + returnJustified(moduleName, moduleMCs, longestLineLength));
             } else {
-                displayMessage();
+                printNewline();
             }
 
         }

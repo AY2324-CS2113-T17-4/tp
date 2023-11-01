@@ -1,10 +1,13 @@
 package seedu.duke.controllers;
-import org.json.simple.JSONObject;
 import seedu.duke.models.logic.CompletePreqs;
 import seedu.duke.models.logic.DataRepository;
-import seedu.duke.models.logic.ModuleList;
+
 import seedu.duke.models.schema.Commands;
+
+import seedu.duke.models.schema.ModuleList;
+
 import seedu.duke.models.schema.Major;
+import seedu.duke.models.schema.Schedule;
 import seedu.duke.models.schema.Student;
 import seedu.duke.models.logic.Api;
 import seedu.duke.views.CommandLineView;
@@ -16,12 +19,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
-import java.util.Arrays;
-
+import java.util.Objects;
 import static seedu.duke.models.logic.Api.getModulePrereqBasedOnCourse;
 import static seedu.duke.models.logic.DataRepository.getRequirements;
 import static seedu.duke.models.logic.ScheduleGenerator.generateRecommendedSchedule;
-//import static seedu.duke.models.logic.ScheduleGenerator.generateRecommendedSchedule;
 
 public class ModulePlannerController {
     private CommandLineView view;
@@ -41,10 +42,16 @@ public class ModulePlannerController {
         this.parser = new Parser();
         this.student = new Student();
 
+
+
         //This modules list of taken and classes left can be in a storage class later on.
         this.modulesMajor = new ModuleList("CS1231S CS2030S CS2040S CS2100 CS2101 CS2106 CS2109S CS3230");
         this.modulesTaken = new ModuleList("CS1231S MA1511");
         this.modulesLeft = new ModuleList();
+
+        Schedule schedule = new Schedule();
+
+        student.setSchedule(schedule);
 
         modsWithPreqs = new HashMap<>();
 
@@ -55,7 +62,6 @@ public class ModulePlannerController {
 
 
     }
-
 
     /**
      * Starts the interactive command-line interface for the academic module management system.
@@ -105,7 +111,6 @@ public class ModulePlannerController {
             String[] words = userInput.split(" ");
 
             String initialWord = words[0].toLowerCase();
-
             boolean validInput;
 
             validInput = Parser.isValidInput(initialWord, words);
@@ -121,17 +126,8 @@ public class ModulePlannerController {
                     view.displayMessage("yup");
                     break;
                 }
-                case "info": {
-                    view.displayMessage("info");
-                    JSONObject moduleInfoObject = Api.getFullModuleInfo("CS2113");
-                    assert (moduleInfoObject != null);
-                    String moduleInfo = (String) moduleInfoObject.get("description");
-                    view.displayMessage(moduleInfo);
-                    break;
-                }
                 case "left": {
                     ArrayList<String> modules = listModulesLeft();
-
                     view.displayMessage("Modules left:");
                     for (String module : modules) {
                         view.displayMessage(module);
@@ -148,8 +144,11 @@ public class ModulePlannerController {
                     break;
                 }
                 case "prereq": {
-                    String keyword = words[1];
-                    System.out.println(getModulePrereqBasedOnCourse(keyword.toUpperCase(), "CEG"));
+                    String module = words[1];
+                    ArrayList<String> prereq = getModulePrereqBasedOnCourse(module.toUpperCase(), "CEG");
+                    view.displayMessage(Objects.requireNonNullElseGet(prereq, () -> "Module " + module +
+                            " has no prerequisites."));
+
                     break;
                 }
                 case "test": {
@@ -158,33 +157,38 @@ public class ModulePlannerController {
                 }
                 case "recommend": {
                     String keyword = words[1];
-                    System.out.println((generateRecommendedSchedule(keyword.toUpperCase())));
+                    chooseToAddToSchedule(generateRecommendedSchedule(keyword.toUpperCase()),in);
                     break;
                 }
                 case "major": {
-                    String printMessageCommand = student.updateMajor(userInput);
-                    switch (printMessageCommand) {
-                    case "currentMajor":
-                        view.displayMessage("Current major is " + student.getMajor() + ".");
-                        break;
-                    case "newMajor":
-                        view.displayMessage("Major " + student.getMajor() + " selected!");
-                        break;
-                    case "invalidMajor":
-                        view.displayMessage("Please select a major from this list: " + Arrays.toString(Major.values()));
-                        break;
-                    // Empty default branch as printMessageCommand cannot take any other value
-                    default:
-                        break;
+                    if (words.length == 2) {
+                        Major major = Major.valueOf(words[1].toUpperCase());
+                        student.setMajor(major);
+                    }
+                    view.handleMajorMessage(words.length, student.getMajor());
+                    break;
+                }
+                case "add": {
+                    String module = words[1].toUpperCase();
+                    int targetSem = Integer.parseInt(words[2]);
+                    boolean isSuccessful = student.getSchedule().addModule(module, targetSem);
+                    view.handleAddMessage(isSuccessful);
+                    if (isSuccessful) {
+                        student.getSchedule().printMainModuleList();
                     }
                     break;
                 }
-                case "required": {
-                    try {
-                        view.printTXTFile(DataRepository.getFullRequirements(student.getMajor()));
-                    } catch (NullPointerException | FileNotFoundException e) {
-                        view.displayMessage("☹ An error occurred. " + e.getMessage());
+                case "delete": {
+                    String module = words[1].toUpperCase();
+                    boolean isSuccessful = student.getSchedule().deleteModule(module);
+                    view.handleDeleteMessage(isSuccessful);
+                    if (isSuccessful) {
+                        student.getSchedule().printMainModuleList();
                     }
+                    break;
+                }
+                case "schedule": {
+                    student.getSchedule().printMainModuleList();
                     break;
                 }
                 case "complete": {
@@ -196,8 +200,22 @@ public class ModulePlannerController {
                     }
                     break;
                 }
+
                 case "help": {
                     printListOfCommands();
+                    break;
+                }
+                case "required": {
+                    getRequiredModules(student.getMajor());
+                    break;
+                }
+                case "info": {
+                    Api.infoCommands(words[1], userInput);
+                    break;
+                }
+                case "search": {
+                    Api.searchCommand(userInput);
+
                     break;
                 }
                 default: {
@@ -205,15 +223,42 @@ public class ModulePlannerController {
                     printListOfCommands();
                     break;
                 }
-
-
                 }
-
-
             }
             userInput = in.nextLine();
         }
     }
+
+    /**
+     * Prompts the user to choose whether to add a list of modules to their draft schedule.
+     * Displays the list of modules and asks for user input. Handles user input validation.
+     *
+     * @param scheduleToAdd A list of modules to be added to the schedule.
+     * @param in            A Scanner object for user input.
+     */
+    public void chooseToAddToSchedule(ArrayList<String> scheduleToAdd, Scanner in){
+
+        view.displayMessage(scheduleToAdd);
+        view.displayMessage("Do you want to add this to your draft schedule?, please input 'Y' or 'N'");
+
+        String userInput = in.nextLine();
+
+        while (!userInput.equals("N") && !userInput.equals(("Y"))){
+            view.displayMessage("Invalid input, please choose Y/N");
+            userInput = in.nextLine();
+        }
+
+        if(userInput.equals("Y")){
+            view.displayMessage("yes was chosen");
+            student.getSchedule().addRecommendedScheduleListToSchedule(scheduleToAdd);
+            student.getSchedule().printMainModuleList();
+
+        }else {
+            view.displayMessage("No was chosen");
+        }
+
+    }
+
 
     private void printListOfCommands() {
         for (String command : commands.printListOfCommands()) {
@@ -221,12 +266,13 @@ public class ModulePlannerController {
         }
     }
 
+
     /**
      * Computes and returns the list of modules that are left in the ModuleList modulesMajor
      * after subtracting the modules in the ModuleList modulesTaken.
+     *
      * @author janelleenqi
      * @return An ArrayList of module codes representing the modules left after the subtraction.
-     * @throws InvalidObjectException If either modulesMajor or modulesTaken is null.
      *
      */
     public ArrayList<String> listModulesLeft() {
@@ -327,6 +373,7 @@ public class ModulePlannerController {
         map.get(key).add(value);
     }
 
+
     /**
      * Checks if the user's major input is valid. A major input is valid if it exists in the enumeration
      * of valid majors.
@@ -341,6 +388,13 @@ public class ModulePlannerController {
         } catch (IllegalArgumentException e) {
             System.out.println("Please choose from the list: CS, or CEG");
             return false;
+
+    public void getRequiredModules(Major major) {
+        try {
+            view.printTXTFile(DataRepository.getFullRequirements(major));
+        } catch (NullPointerException | FileNotFoundException e) {
+            view.displayMessage("☹ An error occurred. " + e.getMessage());
+
         }
     }
 

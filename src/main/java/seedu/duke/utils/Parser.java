@@ -1,8 +1,13 @@
 package seedu.duke.utils;
 
+import seedu.duke.models.schema.Major;
 import seedu.duke.views.ErrorHandler;
 
+
 import java.util.ArrayList;
+=======
+import java.util.Arrays;
+
 import java.util.Objects;
 
 public class Parser {
@@ -22,7 +27,7 @@ public class Parser {
      * @throws IllegalArgumentException if the input format is incorrect or if the year or semester is invalid.
      *
      */
-    public boolean isValidAcademicYear( String userInput ) {
+    public static boolean isValidAcademicYear( String userInput ) {
         try {
             String[] parts = userInput.split("/");
             if(parts.length != 2){
@@ -52,6 +57,13 @@ public class Parser {
         }
     }
 
+    /**
+     * Checks the validity of user input based on the provided command and words array.
+     *
+     * @param command The command provided by the user.
+     * @param words   An array of words parsed from the user input.
+     * @return        True if the input is valid, false otherwise.
+     */
     public static boolean isValidInput(String command, String[] words) {
         switch (command) {
         case "prereq": {
@@ -72,8 +84,56 @@ public class Parser {
             }
             break;
         }
+        case "major": {
+            if (words.length == 1) {
+                return true;
+            }
+            if (words.length > 2) {
+                ErrorHandler.invalidMajorFormat();
+                return false;
+            }
+            try {
+                Major.valueOf(words[1].toUpperCase());
+            } catch (IllegalArgumentException e) {
+                String availableMajors = Arrays.toString(Major.values());
+                ErrorHandler.invalidMajor(availableMajors);
+                return false;
+            }
+            break;
+        }
+        case "add": {
+            if (words.length != 3) {
+                ErrorHandler.invalidAddFormat();
+                return false;
+            }
+            try {
+                Integer.parseInt(words[2]);
+            } catch (NumberFormatException e) {
+                ErrorHandler.invalidSemester();
+            }
+            break;
+        }
+        case "delete": {
+            if (words.length != 2) {
+                ErrorHandler.invalidDeleteFormat();
+                return false;
+            }
+            break;
+        }
         case "test2": {
             if (words.length < 21) {
+                return false;
+            }
+            break;
+        }
+        case "info": {
+            if (words.length < 2) {
+                ErrorHandler.emptyInputforInfoCommand();
+                return false;
+            }
+            if (!words[1].equals("description") && !words[1].equals("workload")
+                    && !words[1].equals("all") && !words[1].equals("requirements")) {
+                ErrorHandler.invalidCommandforInfoCommand();
                 return false;
             }
             break;
@@ -85,6 +145,7 @@ public class Parser {
         }
         return true;
     }
+
 
     public boolean checkNameInput(String userInput, ArrayList<String> forbiddenCommands) {
         // Check for non-empty string
@@ -124,6 +185,20 @@ public class Parser {
 
 
 
+
+
+    /**
+     * Checks the validity of keyword input for a search command.
+     *
+     * @author rohitcube
+     * @param userInput The user input string containing the search command and keywords.
+     * @return          True if the keyword input is valid, false otherwise.
+     */
+    public static boolean isValidKeywordInput(String userInput) {
+        String keywords = userInput.substring(userInput.indexOf("search") + 6);
+        // need to add a function to make search case-insensitive
+        return !keywords.trim().isEmpty();
+    }
 
 
 
