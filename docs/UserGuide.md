@@ -354,6 +354,16 @@ on Tuesday and CS2101 has a tutorial at 10 for 1 on Monday.
 
 **A**: Currently, this feature is not included in NUSDegs.
 
+**Q**: What do I need to run this application? 
+
+**A**: Your computer requires **Internet Acesss and Java 11** to run the application. 
+The operating system (Windows, macOS or Linux), doesn't matter.
+
+**Q**: How is the `pace` function calculated?
+
+**A**: Currently, we set it at a default 160Modular credits to graduate, 
+however it is a feature we plan to include as to cater to double degree students!
+
 ## Command Summary
 Note: if an argument is wrapped with `[]` it means that it is optional. 
 
