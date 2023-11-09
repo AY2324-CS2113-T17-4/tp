@@ -5,6 +5,7 @@ import seedu.duke.utils.exceptions.FailPrereqException;
 import seedu.duke.utils.exceptions.MissingModuleException;
 import seedu.duke.utils.exceptions.InvalidPrereqException;
 
+import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -217,7 +218,7 @@ public class Schedule {
      * @throws FailPrereqException If the module to be deleted is a prerequisite for other modules in the schedule.
      * @throws IllegalArgumentException If the provided module code is not valid, the module is not in the schedule
      */
-    public void deleteModule(String module) throws MandatoryPrereqException, MissingModuleException {
+    public void deleteModule(String module) throws MandatoryPrereqException, MissingModuleException, IOException {
 
         int targetIndex = modulesPlanned.getIndexByString(module);
 
@@ -244,6 +245,8 @@ public class Schedule {
         } catch (IndexOutOfBoundsException | IllegalArgumentException e) {
             modulesAheadArray = new ArrayList<>();
         }
+
+        System.out.println("should not run");
 
         for(String fulfilledModule: requirementsFulfilledFromModule ){
             //over here we check if the semesters in front of us contain a module in fulfilled module
@@ -290,7 +293,7 @@ public class Schedule {
     }
 
     public void shiftModule(String module, int targetSem) throws IllegalArgumentException,
-            FailPrereqException, MandatoryPrereqException, MissingModuleException, InvalidObjectException {
+            FailPrereqException, MandatoryPrereqException, MissingModuleException, IOException {
 
         if (targetSem < 1 || targetSem > MAXIMUM_SEMESTERS) {
             throw new IllegalArgumentException("Please select an integer from 1 to 8 for semester selection");
@@ -495,7 +498,7 @@ public class Schedule {
      * @param course The course for which to generate a recommended schedule.
      * @return An ArrayList of strings representing the recommended schedule in order of completion.
      */
-    public ArrayList<String> generateRecommendedSchedule(String course){
+    public ArrayList<String> generateRecommendedSchedule(String course) throws IOException {
         ArrayList<String> requirements = getRequirements(course);
         HashMap<String, Integer> degreeMap = new HashMap<>();
         Queue<String> q = new LinkedList<>();
