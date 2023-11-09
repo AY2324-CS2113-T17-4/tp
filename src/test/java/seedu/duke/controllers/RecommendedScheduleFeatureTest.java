@@ -91,7 +91,8 @@ public class RecommendedScheduleFeatureTest {
         student.getSchedule().addRecommendedScheduleListToSchedule(recommendedSchedule,true);
         student.getSchedule().printMainModuleList();
         String printedOutput = outputStream.toString().trim();
-        String expectedOutput = "Sem 1:   X CS1231S      X MA1522       X IS1108       X MA1521       X GEA1000      \n" +
+        String expectedOutput = "Sem 1:   X CS1231S      X MA1522       X IS1108       X MA1521       " +
+                "X GEA1000      \n" +
                 "Sem 2:   X GEN2000      X GESS1000     X CS1101S      X CS2101       X ES2660       \n" +
                 "Sem 3:   X CS2100       X CS2040S      X CS2030       X ST2334       X GEC1000      \n" +
                 "Sem 4:   X CS2106       X CS3230       X CS2109S      X CS2103T      \n" +
