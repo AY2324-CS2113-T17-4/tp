@@ -246,8 +246,6 @@ public class Schedule {
             modulesAheadArray = new ArrayList<>();
         }
 
-        System.out.println("should not run");
-
         for(String fulfilledModule: requirementsFulfilledFromModule ){
             //over here we check if the semesters in front of us contain a module in fulfilled module
             if(modulesAheadArray.contains(fulfilledModule)){
