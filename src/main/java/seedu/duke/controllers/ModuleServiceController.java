@@ -6,7 +6,6 @@ import seedu.duke.models.schema.Student;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-import static seedu.duke.views.CommandLineView.displayHelp;
 import static seedu.duke.views.MajorRequirementsView.printRequiredModules;
 import static seedu.duke.views.CommandLineView.displayMessage;
 import static seedu.duke.views.ModuleInfoView.printModuleStringArray;
