@@ -101,7 +101,8 @@ public class ModulePlannerController {
             stopLoadingAnimation();
 
             String dataRetrievalSuccess = "Data successfully retrieved";
-            String welcomeBackMessage = "Welcome back " + student.getName() + ", you are currently in " + student.getYear() +
+            String welcomeBackMessage = "Welcome back " + student.getName() + ", you are currently in "
+                    + student.getYear() +
                     " studying " + student.getMajor();
             ui.printMessage(dataRetrievalSuccess, welcomeBackMessage);
 

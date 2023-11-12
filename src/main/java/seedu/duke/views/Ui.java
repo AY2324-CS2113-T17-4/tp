@@ -1,7 +1,4 @@
 package seedu.duke.views;
-import static java.util.Objects.requireNonNull;
-
-import java.util.List;
 import java.util.Scanner;
 import java.io.PrintStream;
 import java.io.InputStream;
